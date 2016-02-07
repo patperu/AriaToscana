@@ -4,7 +4,17 @@
 \name{at_inq}
 \alias{at_inq}
 \title{Measurements of Air Pollutants (2008 - 2014)}
-\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 15176034 rows and 8 columns.}
+\format{Data frame with columns
+\describe{
+\item{stazione}{Stazione, first two characters are the Provincia}
+\item{parameter}{inquinante}
+\item{year}{Year}
+\item{month}{Month}
+\item{day}{Day}
+\item{hour}{Hour}
+\item{value}{Measure}
+\item{valid}{0 = measure is not valid, 1 = measure is valid}
+}}
 \usage{
 at_inq
 }

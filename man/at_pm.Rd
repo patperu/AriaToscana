@@ -4,12 +4,21 @@
 \name{at_pm}
 \alias{at_pm}
 \title{Particulate Matter (PM)}
-\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 141722 rows and 7 columns.}
+\format{Data frame with columns
+\describe{
+\item{stazione}{Stazione, first two characters are the Provincia}
+\item{parameter}{inquinante}
+\item{year}{Year}
+\item{month}{Month}
+\item{day}{Day}
+\item{value}{Measure}
+\item{valid}{0 = measure is not valid, 1 = measure is valid}
+}}
 \usage{
 at_pm
 }
 \description{
-This dataset contains the measures of PM10 and PM2.5 for the years 2008-2014.
+This dataset contains the daily measures of PM10 and PM2.5 for the years 2008-2014.
 }
 \author{
 Patrick Hausmann, Source: ARPAT Toscana
