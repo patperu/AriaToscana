@@ -1,0 +1,153 @@
+---
+title: "Aria Toscana"
+author: "Patrick Hausmann"
+date: "06/02/2016"
+output:
+  html_document:
+    keep_md: true
+  md_document:
+    variant: markdown_github
+css: custom.css
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.retina = 2,
+  fig.height = 8.27, 
+  fig.width = 11.69,
+  dev=c('png')
+)
+```
+
+```{r Setup, include = TRUE}
+
+library('ggplot2')
+library('tidyr')
+library('dplyr')
+library('lubridate')
+library('AriaToscana')
+
+options(stringsAsFactors = FALSE)
+
+```
+
+```{r Check_Parameter_Names, eval = TRUE}
+
+addmargins(table(at_inq$parameter, at_inq$year)) %>% 
+  knitr::kable(format.args = list(big.mark = '.', decimal.mark = ','))
+
+```
+
+```{r Mean_over_day, eval = TRUE, include = TRUE}
+
+# If 4 or more mesures are 'NA', then 'NA' for the whole set
+ff <- function(L) ifelse(sum(is.na(L)) >= 4, NA, mean(L, na.rm = TRUE))
+
+x1 <- tbl_df(at_inq) %>%
+       filter(year %in% c(2008, 2012, 2014) & parameter %in% c("O3", "NO2", "CO")) %>%
+       mutate(br = factor(cut(hour, breaks = 4), 
+                          labels = c("00-06h", "06-12h", 
+                                     "12-18h", "18-24h")),
+              commune = substr(stazione, 1, 2)) %>%
+       group_by(commune, stazione, year, month, day, parameter, br) %>%
+       summarise(val_na   = sum(is.na(value)),
+                 val_mean = ff(value))
+
+```
+
+```{r plot_2014, eval = TRUE}
+
+p1 <- ggplot(subset(x1, subset = year == 2014 & parameter == "NO2" & commune == "FI"), 
+             aes(as.factor(month), val_mean, group = year, color = year))
+p1 <- p1 + geom_point(shape = 1, col ="blue") 
+p1 <- p1 + facet_grid(br ~ stazione) 
+p1 <- p1 + stat_smooth(aes(group = 1), col = "red")
+p1 <- p1 + labs(title = "Biossido di azoto NO2, 2014, Firenze (FI)")
+p1 <- p1 + labs(x = "Mese", y = expression(paste(Biossido~di~azoto~(NO2)~µg/m^3)))
+p1
+```
+
+```{r plot_2008_2014, eval = TRUE}
+
+p2 <- ggplot(subset(x1, subset = 
+                         stazione %in% c("LU-CAPANNORI", "FI-MOSSE", 
+                                         "FI-GRAMSCI", "PO-ROMA") & 
+                         parameter == "NO2"), aes(as.factor(month), val_mean))
+p2 <- p2 + facet_grid(br ~ stazione)
+p2 <- p2 + stat_smooth(aes(group = as.factor(year), color = as.factor(year)), se = FALSE)
+p2 <- p2 + labs(title = "Biossido di azoto NO2, 2008/2012/2014")
+p2 <- p2 + labs(x = "Mese", 
+                y = expression(paste(Biossido~di~azoto~(NO2)~µg/m^3)))
+p2
+```
+
+## PM10
+
+This is table 4.1.2. on page 18 from the [last report 2015](http://www.arpat.toscana.it/documentazione/catalogo-pubblicazioni-arpat/relazione-annuale-sullo-stato-della-qualita-dellaria-nella-regione-toscana-anno-2014/attachment_download/pubblicazione)
+
+```{r PM10_over_50}
+
+m <- tbl_df(at_pm) %>%
+       filter(parameter == "PM10" & valid == 1) %>%
+       group_by(stazione, year) %>%
+       mutate(days_gt50 = cumsum(value > 50)) %>%
+       select(stazione, year, days_gt50) %>%
+       top_n(1, days_gt50) %>%
+       distinct(stazione, year)
+
+data.frame(t(spread(m, stazione, days_gt50, fill = "."))) %>% knitr::kable()
+```
+
+This is table 4.1.5. on page 24 from the [last report 2015](http://www.arpat.toscana.it/documentazione/catalogo-pubblicazioni-arpat/relazione-annuale-sullo-stato-della-qualita-dellaria-nella-regione-toscana-anno-2014/attachment_download/pubblicazione)
+
+```{r PM10_anual_mean}
+
+m <- tbl_df(at_pm) %>%
+       filter(parameter == "PM10" & valid == 1) %>%
+       group_by(stazione, year) %>%
+       summarise(xx = round(mean(value), 0)) %>%
+       select(stazione, year, xx) %>%
+       distinct(stazione, year)
+
+data.frame(t(spread(m, stazione, xx, fill = "."))) %>% knitr::kable()
+```
+
+## Percent of missing observations per month
+
+```{r Calc_pct_no}
+
+x3 <- tbl_df(x1) %>%
+       group_by(commune, stazione, year, month, parameter) %>%
+        summarise(pct_na = round((sum(val_na) /  (max(day) * 24)) * 100, 1) )
+
+filter(x3, year == 2014 & 
+           stazione == "FI-GRAMSCI" & 
+           parameter == "NO2") %>% knitr::kable()
+```
+
+## Missing PM
+
+Percent of missing values 
+
+```{r Calc_missing_pm}
+
+x4 <- tbl_df(at_pm) %>%
+       group_by(stazione, year, month, parameter) %>%
+       summarise(pct_na = round((sum(is.na(value)) /  (max(day))) * 100, 1) ) %>%
+       filter(stazione == "FI-GRAMSCI" & parameter == "PM10") %>%
+       ungroup() %>%
+       select(year, month, pct_na)
+
+x4 <- reshape(data.frame(x4), idvar = "month", timevar= "year", direction = "wide")
+names(x4) <- sub("pct_na", "x", names(x4))
+x4 %>% knitr::kable()
+```
+
+```{r Session_Info}
+devtools::session_info()
+```
+
