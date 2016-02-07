@@ -390,12 +390,12 @@ x1 &lt;- tbl_df(at_inq) %&gt;%
        mutate(br = factor(cut(hour, breaks = 4), 
                           labels = c(&quot;00-06h&quot;, &quot;06-12h&quot;, 
                                      &quot;12-18h&quot;, &quot;18-24h&quot;)),
-              commune = substr(stazione, 1, 2)) %&gt;%
-       group_by(commune, stazione, year, month, day, parameter, br) %&gt;%
+              provincia = substr(stazione, 1, 2)) %&gt;%
+       group_by(provincia, stazione, year, month, day, parameter, br) %&gt;%
        summarise(val_na   = sum(is.na(value)),
                  val_mean = ff(value))</code></pre>
 <pre class="r"><code>
-p1 &lt;- ggplot(subset(x1, subset = year == 2014 &amp; parameter == &quot;NO2&quot; &amp; commune == &quot;FI&quot;), 
+p1 &lt;- ggplot(subset(x1, subset = year == 2014 &amp; parameter == &quot;NO2&quot; &amp; provincia == &quot;FI&quot;), 
              aes(as.factor(month), val_mean, group = year, color = year))
 p1 &lt;- p1 + geom_point(shape = 1, col =&quot;blue&quot;) 
 p1 &lt;- p1 + facet_grid(br ~ stazione) 
@@ -1323,11 +1323,11 @@ data.frame(t(spread(m, stazione, days_gt50, fill = &quot;.&quot;))) %&gt;% knitr
 m &lt;- tbl_df(at_pm) %&gt;%
        filter(parameter == &quot;PM10&quot; &amp; valid == 1) %&gt;%
        group_by(stazione, year) %&gt;%
-       summarise(xx = round(mean(value), 0)) %&gt;%
-       select(stazione, year, xx) %&gt;%
+       summarise(val_mean = round(mean(value), 0)) %&gt;%
+       select(stazione, year, val_mean) %&gt;%
        distinct(stazione, year)
 
-data.frame(t(spread(m, stazione, xx, fill = &quot;.&quot;))) %&gt;% knitr::kable()</code></pre>
+data.frame(t(spread(m, stazione, val_mean, fill = &quot;.&quot;))) %&gt;% knitr::kable()</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -2219,8 +2219,8 @@ data.frame(t(spread(m, stazione, xx, fill = &quot;.&quot;))) %&gt;% knitr::kable
 <h2>Percent of missing observations per month</h2>
 <pre class="r"><code>
 x3 &lt;- tbl_df(x1) %&gt;%
-       group_by(commune, stazione, year, month, parameter) %&gt;%
-        summarise(pct_na = round((sum(val_na) /  (max(day) * 24)) * 100, 1) )
+       group_by(provincia, stazione, year, month, parameter) %&gt;%
+        summarise(pct_na = round((sum(val_na) / (max(day) * 24)) * 100, 1) )
 
 filter(x3, year == 2014 &amp; 
            stazione == &quot;FI-GRAMSCI&quot; &amp; 
@@ -2228,7 +2228,7 @@ filter(x3, year == 2014 &amp;
 <table>
 <thead>
 <tr class="header">
-<th align="left">commune</th>
+<th align="left">provincia</th>
 <th align="left">stazione</th>
 <th align="right">year</th>
 <th align="right">month</th>

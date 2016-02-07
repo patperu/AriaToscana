@@ -72,8 +72,8 @@ x1 <- tbl_df(at_inq) %>%
        mutate(br = factor(cut(hour, breaks = 4), 
                           labels = c("00-06h", "06-12h", 
                                      "12-18h", "18-24h")),
-              commune = substr(stazione, 1, 2)) %>%
-       group_by(commune, stazione, year, month, day, parameter, br) %>%
+              provincia = substr(stazione, 1, 2)) %>%
+       group_by(provincia, stazione, year, month, day, parameter, br) %>%
        summarise(val_na   = sum(is.na(value)),
                  val_mean = ff(value))
 ```
@@ -81,7 +81,7 @@ x1 <- tbl_df(at_inq) %>%
 
 ```r
 
-p1 <- ggplot(subset(x1, subset = year == 2014 & parameter == "NO2" & commune == "FI"), 
+p1 <- ggplot(subset(x1, subset = year == 2014 & parameter == "NO2" & provincia == "FI"), 
              aes(as.factor(month), val_mean, group = year, color = year))
 p1 <- p1 + geom_point(shape = 1, col ="blue") 
 p1 <- p1 + facet_grid(br ~ stazione) 
@@ -229,11 +229,11 @@ This is table 4.1.5. on page 24 from the [last report 2015](http://www.arpat.tos
 m <- tbl_df(at_pm) %>%
        filter(parameter == "PM10" & valid == 1) %>%
        group_by(stazione, year) %>%
-       summarise(xx = round(mean(value), 0)) %>%
-       select(stazione, year, xx) %>%
+       summarise(val_mean = round(mean(value), 0)) %>%
+       select(stazione, year, val_mean) %>%
        distinct(stazione, year)
 
-data.frame(t(spread(m, stazione, xx, fill = "."))) %>% knitr::kable()
+data.frame(t(spread(m, stazione, val_mean, fill = "."))) %>% knitr::kable()
 ```
 
                                 X1     X2     X3     X4     X5     X6     X7   
@@ -332,8 +332,8 @@ SI-POGGIBONSI                   .      .      .      29     22     18     18
 ```r
 
 x3 <- tbl_df(x1) %>%
-       group_by(commune, stazione, year, month, parameter) %>%
-        summarise(pct_na = round((sum(val_na) /  (max(day) * 24)) * 100, 1) )
+       group_by(provincia, stazione, year, month, parameter) %>%
+        summarise(pct_na = round((sum(val_na) / (max(day) * 24)) * 100, 1) )
 
 filter(x3, year == 2014 & 
            stazione == "FI-GRAMSCI" & 
@@ -342,20 +342,20 @@ filter(x3, year == 2014 &
 
 
 
-commune   stazione      year   month  parameter    pct_na
---------  -----------  -----  ------  ----------  -------
-FI        FI-GRAMSCI    2014       1  NO2             4.3
-FI        FI-GRAMSCI    2014       2  NO2             8.6
-FI        FI-GRAMSCI    2014       3  NO2             5.1
-FI        FI-GRAMSCI    2014       4  NO2            11.1
-FI        FI-GRAMSCI    2014       5  NO2             9.1
-FI        FI-GRAMSCI    2014       6  NO2            10.3
-FI        FI-GRAMSCI    2014       7  NO2             6.0
-FI        FI-GRAMSCI    2014       8  NO2            15.3
-FI        FI-GRAMSCI    2014       9  NO2            17.2
-FI        FI-GRAMSCI    2014      10  NO2            11.8
-FI        FI-GRAMSCI    2014      11  NO2             5.4
-FI        FI-GRAMSCI    2014      12  NO2            24.3
+provincia   stazione      year   month  parameter    pct_na
+----------  -----------  -----  ------  ----------  -------
+FI          FI-GRAMSCI    2014       1  NO2             4.3
+FI          FI-GRAMSCI    2014       2  NO2             8.6
+FI          FI-GRAMSCI    2014       3  NO2             5.1
+FI          FI-GRAMSCI    2014       4  NO2            11.1
+FI          FI-GRAMSCI    2014       5  NO2             9.1
+FI          FI-GRAMSCI    2014       6  NO2            10.3
+FI          FI-GRAMSCI    2014       7  NO2             6.0
+FI          FI-GRAMSCI    2014       8  NO2            15.3
+FI          FI-GRAMSCI    2014       9  NO2            17.2
+FI          FI-GRAMSCI    2014      10  NO2            11.8
+FI          FI-GRAMSCI    2014      11  NO2             5.4
+FI          FI-GRAMSCI    2014      12  NO2            24.3
 
 ## Missing PM
 
