@@ -97,9 +97,13 @@ m <- tbl_df(at_pm) %>%
        mutate(days_gt50 = cumsum(value > 50)) %>%
        select(stazione, year, days_gt50) %>%
        top_n(1, days_gt50) %>%
-       distinct(stazione, year)
+       distinct(stazione, year) %>%
+       ungroup()
 
-data.frame(t(spread(m, stazione, days_gt50, fill = "."))) %>% knitr::kable()
+mt <- reshape(data.frame(m), timevar = "year", idvar = "stazione", direction = "wide")
+rownames(mt) <- NULL
+names(mt) <- sub("days_gt50.", "", names(mt))
+mt %>% knitr::kable()
 ```
 
 This is table 4.1.5. on page 24 from the [last report 2015](http://www.arpat.toscana.it/documentazione/catalogo-pubblicazioni-arpat/relazione-annuale-sullo-stato-della-qualita-dellaria-nella-regione-toscana-anno-2014/attachment_download/pubblicazione)
@@ -111,9 +115,13 @@ m <- tbl_df(at_pm) %>%
        group_by(stazione, year) %>%
        summarise(val_mean = round(mean(value), 0)) %>%
        select(stazione, year, val_mean) %>%
-       distinct(stazione, year)
+       ungroup() %>%
+       arrange(year, stazione)
 
-data.frame(t(spread(m, stazione, val_mean, fill = "."))) %>% knitr::kable()
+mt <- reshape(data.frame(m), timevar = "year", idvar = "stazione", direction = "wide")
+rownames(mt) <- NULL
+names(mt) <- sub("val_mean.", "", names(mt))
+mt %>% knitr::kable()
 ```
 
 ## Percent of missing observations per month
