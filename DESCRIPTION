@@ -1,7 +1,7 @@
 Package: AriaToscana
 Type: Package
 Title: Data About Air Pollutants from ARPAT Toscana
-Version: 0.1.0.9100
+Version: 0.2.0
 Authors@R: person("Patrick", "Hausmann", role = c("aut", "cre"),
              email = "patrick.hausmann@covimo.de")
 Description: This package contains air pollution data for the years 2008-2014 from ARPAT Toscana.
