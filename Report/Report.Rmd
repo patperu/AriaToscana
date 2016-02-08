@@ -1,7 +1,7 @@
 ---
 title: "Aria Toscana"
 author: "Patrick Hausmann"
-date: "06/02/2016"
+date: "08/02/2016"
 output:
   html_document:
     keep_md: true
@@ -45,7 +45,7 @@ addmargins(table(at_inq$parameter, at_inq$year)) %>%
 
 ```{r Mean_over_day, eval = TRUE, include = TRUE}
 
-# If 4 or more mesures are 'NA', then 'NA' for the whole set
+# If 4 or more measures are 'NA', then 'NA' for the whole time frame (br)
 ff <- function(L) ifelse(sum(is.na(L)) >= 4, NA, mean(L, na.rm = TRUE))
 
 x1 <- tbl_df(at_inq) %>%
@@ -151,7 +151,7 @@ x4 <- tbl_df(at_pm) %>%
        select(year, month, pct_na)
 
 x4 <- reshape(data.frame(x4), idvar = "month", timevar= "year", direction = "wide")
-names(x4) <- sub("pct_na", "x", names(x4))
+names(x4) <- sub("pct_na.", "", names(x4))
 x4 %>% knitr::kable()
 ```
 
