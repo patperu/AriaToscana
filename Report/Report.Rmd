@@ -31,7 +31,8 @@ library('dplyr')
 library('lubridate')
 library('AriaToscana')
 
-options(stringsAsFactors = FALSE)
+options(stringsAsFactors = FALSE,
+        knitr.table.format = 'markdown')
 
 ```
 
