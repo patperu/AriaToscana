@@ -10,7 +10,7 @@
 
 <meta name="author" content="Patrick Hausmann" />
 
-<meta name="date" content="2016-06-02" />
+<meta name="date" content="2016-08-02" />
 
 <title>Aria Toscana</title>
 
@@ -65,7 +65,7 @@ img {
 <div id="header">
 <h1 class="title">Aria Toscana</h1>
 <h4 class="author"><em>Patrick Hausmann</em></h4>
-<h4 class="date"><em>06/02/2016</em></h4>
+<h4 class="date"><em>08/02/2016</em></h4>
 </div>
 
 
@@ -82,14 +82,25 @@ library('dplyr')
 #&gt; The following objects are masked from 'package:base':
 #&gt; 
 #&gt;     intersect, setdiff, setequal, union
-library('lubridate')
 library('AriaToscana')
 
-options(stringsAsFactors = FALSE)</code></pre>
+options(stringsAsFactors = FALSE,
+        knitr.table.format = 'markdown')</code></pre>
 <pre class="r"><code>
 addmargins(table(at_inq$parameter, at_inq$year)) %&gt;% 
   knitr::kable(format.args = list(big.mark = '.', decimal.mark = ','))</code></pre>
-<table>
+<table style="width:139%;">
+<colgroup>
+<col width="15%"></col>
+<col width="15%"></col>
+<col width="15%"></col>
+<col width="15%"></col>
+<col width="15%"></col>
+<col width="15%"></col>
+<col width="15%"></col>
+<col width="15%"></col>
+<col width="16%"></col>
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left"></th>
@@ -382,7 +393,7 @@ addmargins(table(at_inq$parameter, at_inq$year)) %&gt;%
 </tbody>
 </table>
 <pre class="r"><code>
-# If 4 or more mesures are 'NA', then 'NA' for the whole set
+# If 4 or more measures are 'NA', then 'NA' for the whole time frame (br)
 ff &lt;- function(L) ifelse(sum(is.na(L)) &gt;= 4, NA, mean(L, na.rm = TRUE))
 
 x1 &lt;- tbl_df(at_inq) %&gt;%
@@ -429,892 +440,886 @@ m &lt;- tbl_df(at_pm) %&gt;%
        mutate(days_gt50 = cumsum(value &gt; 50)) %&gt;%
        select(stazione, year, days_gt50) %&gt;%
        top_n(1, days_gt50) %&gt;%
-       distinct(stazione, year)
+       distinct(stazione, year) %&gt;%
+       ungroup()
 
-data.frame(t(spread(m, stazione, days_gt50, fill = &quot;.&quot;))) %&gt;% knitr::kable()</code></pre>
+mt &lt;- reshape(data.frame(m), timevar = &quot;year&quot;, idvar = &quot;stazione&quot;, direction = &quot;wide&quot;)
+rownames(mt) &lt;- NULL
+names(mt) &lt;- sub(&quot;days_gt50.&quot;, &quot;&quot;, names(mt))
+mt %&gt;% knitr::kable()</code></pre>
 <table>
 <thead>
 <tr class="header">
-<th align="left"></th>
-<th align="left">X1</th>
-<th align="left">X2</th>
-<th align="left">X3</th>
-<th align="left">X4</th>
-<th align="left">X5</th>
-<th align="left">X6</th>
-<th align="left">X7</th>
+<th align="left">stazione</th>
+<th align="right">2008</th>
+<th align="right">2009</th>
+<th align="right">2010</th>
+<th align="right">2011</th>
+<th align="right">2012</th>
+<th align="right">2013</th>
+<th align="right">2014</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">year</td>
-<td align="left">2008</td>
-<td align="left">2009</td>
-<td align="left">2010</td>
-<td align="left">2011</td>
-<td align="left">2012</td>
-<td align="left">2013</td>
-<td align="left">2014</td>
-</tr>
-<tr class="even">
-<td align="left">AR-ACROPOLI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">12</td>
-<td align="left">9</td>
-</tr>
-<tr class="odd">
 <td align="left">AR-CASA-STABBI</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">4</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">4</td>
 </tr>
 <tr class="even">
 <td align="left">AR-PIAZZA-REPUBBLICA</td>
-<td align="left">17</td>
-<td align="left">15</td>
-<td align="left">20</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">17</td>
+<td align="right">15</td>
+<td align="right">20</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">AR-REPUBBLICA</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">34</td>
-<td align="left">29</td>
-<td align="left">26</td>
-<td align="left">31</td>
-</tr>
-<tr class="even">
 <td align="left">AR-VIA-FIORENTINA</td>
-<td align="left">44</td>
-<td align="left">36</td>
-<td align="left">26</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">44</td>
+<td align="right">36</td>
+<td align="right">26</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">AR-REPUBBLICA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">34</td>
+<td align="right">29</td>
+<td align="right">26</td>
+<td align="right">31</td>
 </tr>
 <tr class="odd">
+<td align="left">AR-ACROPOLI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">12</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
 <td align="left">FI-BASSI</td>
-<td align="left">33</td>
-<td align="left">23</td>
-<td align="left">13</td>
-<td align="left">19</td>
-<td align="left">11</td>
-<td align="left">17</td>
-<td align="left">4</td>
-</tr>
-<tr class="even">
-<td align="left">FI-BOBOLI</td>
-<td align="left">19</td>
-<td align="left">13</td>
-<td align="left">10</td>
-<td align="left">17</td>
-<td align="left">7</td>
-<td align="left">18</td>
-<td align="left">3</td>
+<td align="right">33</td>
+<td align="right">23</td>
+<td align="right">13</td>
+<td align="right">19</td>
+<td align="right">11</td>
+<td align="right">17</td>
+<td align="right">4</td>
 </tr>
 <tr class="odd">
-<td align="left">FI-CALENZANO-BOCCACCIO</td>
-<td align="left">56</td>
-<td align="left">20</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="left">FI-BOBOLI</td>
+<td align="right">19</td>
+<td align="right">13</td>
+<td align="right">10</td>
+<td align="right">17</td>
+<td align="right">7</td>
+<td align="right">18</td>
+<td align="right">3</td>
 </tr>
 <tr class="even">
-<td align="left">FI-CALENZANO-GIOVANNI</td>
-<td align="left">.</td>
-<td align="left">64</td>
-<td align="left">52</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="left">FI-CALENZANO-BOCCACCIO</td>
+<td align="right">56</td>
+<td align="right">20</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">FI-CAMPI-BISENZIO</td>
-<td align="left">42</td>
-<td align="left">49</td>
-<td align="left">45</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">42</td>
+<td align="right">49</td>
+<td align="right">45</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">FI-EMPOLI-RIDOLFI</td>
-<td align="left">16</td>
-<td align="left">23</td>
-<td align="left">48</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">16</td>
+<td align="right">23</td>
+<td align="right">48</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">FI-GRAMSCI</td>
-<td align="left">98</td>
-<td align="left">88</td>
-<td align="left">65</td>
-<td align="left">55</td>
-<td align="left">46</td>
-<td align="left">38</td>
-<td align="left">19</td>
+<td align="right">98</td>
+<td align="right">88</td>
+<td align="right">65</td>
+<td align="right">55</td>
+<td align="right">46</td>
+<td align="right">38</td>
+<td align="right">19</td>
 </tr>
 <tr class="even">
-<td align="left">FI-GREVE</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">17</td>
-<td align="left">3</td>
-<td align="left">0</td>
-<td align="left">.</td>
-</tr>
-<tr class="odd">
 <td align="left">FI-GREVE-PASSO-PECORAI</td>
-<td align="left">12</td>
-<td align="left">1</td>
-<td align="left">10</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">FI-INCISA</td>
-<td align="left">.</td>
-<td align="left">5</td>
-<td align="left">18</td>
-<td align="left">48</td>
-<td align="left">45</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">12</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">FI-MONTELUPO-VIA-ASIA</td>
-<td align="left">32</td>
-<td align="left">4</td>
-<td align="left">5</td>
-<td align="left">0</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">32</td>
+<td align="right">4</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">FI-MOSSE</td>
-<td align="left">88</td>
-<td align="left">82</td>
-<td align="left">66</td>
-<td align="left">59</td>
-<td align="left">69</td>
-<td align="left">46</td>
-<td align="left">11</td>
+<td align="right">88</td>
+<td align="right">82</td>
+<td align="right">66</td>
+<td align="right">59</td>
+<td align="right">69</td>
+<td align="right">46</td>
+<td align="right">11</td>
 </tr>
 <tr class="odd">
-<td align="left">FI-PONTASSIEVE</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">2</td>
-<td align="left">1</td>
-</tr>
-<tr class="even">
-<td align="left">FI-PONTASSIEVE-CURIEL</td>
-<td align="left">.</td>
-<td align="left">5</td>
-<td align="left">2</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="odd">
-<td align="left">FI-SCANDICCI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">37</td>
-<td align="left">23</td>
-<td align="left">22</td>
-<td align="left">5</td>
-</tr>
-<tr class="even">
 <td align="left">FI-SCANDICCI-BUOZZI</td>
-<td align="left">49</td>
-<td align="left">48</td>
-<td align="left">38</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="odd">
-<td align="left">FI-SESTO</td>
-<td align="left">.</td>
-<td align="left">39</td>
-<td align="left">26</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">49</td>
+<td align="right">48</td>
+<td align="right">38</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">FI-SIGNA</td>
-<td align="left">120</td>
-<td align="left">85</td>
-<td align="left">64</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">26</td>
+<td align="right">120</td>
+<td align="right">85</td>
+<td align="right">64</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">26</td>
 </tr>
 <tr class="odd">
+<td align="left">FI-CALENZANO-GIOVANNI</td>
+<td align="right">NA</td>
+<td align="right">64</td>
+<td align="right">52</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">FI-INCISA</td>
+<td align="right">NA</td>
+<td align="right">5</td>
+<td align="right">18</td>
+<td align="right">48</td>
+<td align="right">45</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">FI-PONTASSIEVE-CURIEL</td>
+<td align="right">NA</td>
+<td align="right">5</td>
+<td align="right">2</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">FI-SESTO</td>
+<td align="right">NA</td>
+<td align="right">39</td>
+<td align="right">26</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">FI-GREVE</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">17</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">FI-PONTASSIEVE</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">FI-SCANDICCI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">37</td>
+<td align="right">23</td>
+<td align="right">22</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
 <td align="left">FI-SIGNA-ROMA</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">36</td>
-<td align="left">46</td>
-<td align="left">30</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">GR-SONNINO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">5</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">36</td>
+<td align="right">46</td>
+<td align="right">30</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">GR-URSS</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">3</td>
-</tr>
-<tr class="even">
 <td align="left">GR-VIA-URSS</td>
-<td align="left">3</td>
-<td align="left">4</td>
-<td align="left">0</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">3</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">GR-VIALE-SONNINO</td>
-<td align="left">29</td>
-<td align="left">17</td>
-<td align="left">29</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">LI-CAPPIELLO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">0</td>
+<td align="right">29</td>
+<td align="right">17</td>
+<td align="right">29</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">LI-CARDUCCI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">7</td>
-<td align="left">4</td>
-<td align="left">1</td>
-<td align="left">0</td>
+<td align="left">GR-SONNINO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">5</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
-<td align="left">LI-COTONE</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">14</td>
-<td align="left">6</td>
-<td align="left">8</td>
-<td align="left">8</td>
+<td align="left">GR-URSS</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">3</td>
 </tr>
 <tr class="odd">
 <td align="left">LI-COTONE-RETE-LI</td>
-<td align="left">29</td>
-<td align="left">21</td>
-<td align="left">27</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">LI-GIARDINI-PUBBLICI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">44</td>
-<td align="left">3</td>
-</tr>
-<tr class="odd">
-<td align="left">LI-GOBETTI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">2</td>
-<td align="left">0</td>
-<td align="left">3</td>
-<td align="left">0</td>
-</tr>
-<tr class="even">
-<td align="left">LI-LAPIRA</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">0</td>
-</tr>
-<tr class="odd">
-<td align="left">LI-MAUROGORDATO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">LI-PIOMBINO-PARCO-VIII-MARZO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">2</td>
-</tr>
-<tr class="odd">
-<td align="left">LI-POGGIO-SAN-ROCCO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">LI-POGGIO-SAN-ROCCO-ROSIGNANO</td>
-<td align="left">.</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="odd">
-<td align="left">LI-VENETO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">10</td>
-<td align="left">6</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">29</td>
+<td align="right">21</td>
+<td align="right">27</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">LI-VIA-GOBETTI</td>
-<td align="left">10</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">LI-VIA-VENETO</td>
-<td align="left">13</td>
-<td align="left">10</td>
-<td align="left">3</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">13</td>
+<td align="right">10</td>
+<td align="right">3</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">LI-VIALE-CARDUCCI</td>
-<td align="left">40</td>
-<td align="left">20</td>
-<td align="left">11</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">40</td>
+<td align="right">20</td>
+<td align="right">11</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">LI-VILLA-MAUROGORDATO</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
+<td align="left">LI-POGGIO-SAN-ROCCO-ROSIGNANO</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">LI-CARDUCCI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">7</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">LI-COTONE</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">14</td>
+<td align="right">6</td>
+<td align="right">8</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">LI-GOBETTI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">LI-MAUROGORDATO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">LI-POGGIO-SAN-ROCCO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">LI-VENETO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">10</td>
+<td align="right">6</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">LI-GIARDINI-PUBBLICI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">44</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">LI-CAPPIELLO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">LI-LAPIRA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">LI-PIOMBINO-PARCO-VIII-MARZO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
 <td align="left">LU-2VIAREGGIO</td>
-<td align="left">59</td>
-<td align="left">27</td>
-<td align="left">9</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">59</td>
+<td align="right">27</td>
+<td align="right">9</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">LU-CAPANNORI</td>
-<td align="left">40</td>
-<td align="left">35</td>
-<td align="left">38</td>
-<td align="left">57</td>
-<td align="left">36</td>
-<td align="left">30</td>
-<td align="left">59</td>
+<td align="right">40</td>
+<td align="right">35</td>
+<td align="right">38</td>
+<td align="right">57</td>
+<td align="right">36</td>
+<td align="right">30</td>
+<td align="right">59</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">LU-MICHELETTO</td>
-<td align="left">41</td>
-<td align="left">50</td>
-<td align="left">48</td>
-<td align="left">65</td>
-<td align="left">54</td>
-<td align="left">41</td>
-<td align="left">34</td>
+<td align="right">41</td>
+<td align="right">50</td>
+<td align="right">48</td>
+<td align="right">65</td>
+<td align="right">54</td>
+<td align="right">41</td>
+<td align="right">34</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">LU-PORCARI</td>
-<td align="left">42</td>
-<td align="left">41</td>
-<td align="left">41</td>
-<td align="left">54</td>
-<td align="left">37</td>
-<td align="left">27</td>
-<td align="left">23</td>
+<td align="right">42</td>
+<td align="right">41</td>
+<td align="right">41</td>
+<td align="right">54</td>
+<td align="right">37</td>
+<td align="right">27</td>
+<td align="right">23</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">LU-TANGENZIALE</td>
-<td align="left">121</td>
-<td align="left">92</td>
-<td align="left">98</td>
-<td align="left">54</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">121</td>
+<td align="right">92</td>
+<td align="right">98</td>
+<td align="right">54</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">LU-VIAREGGIO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">37</td>
-<td align="left">15</td>
-<td align="left">21</td>
-<td align="left">11</td>
-</tr>
-<tr class="even">
-<td align="left">MS-CAPUCCINI</td>
-<td align="left">.</td>
-<td align="left">0</td>
-<td align="left">4</td>
-<td align="left">1</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">37</td>
+<td align="right">15</td>
+<td align="right">21</td>
+<td align="right">11</td>
 </tr>
 <tr class="odd">
-<td align="left">MS-CARRIONA</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">30</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">MS-COLOMBAROTTO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">2</td>
-<td align="left">3</td>
-<td align="left">9</td>
-<td align="left">2</td>
-</tr>
-<tr class="odd">
-<td align="left">MS-GALVANI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">9</td>
-<td align="left">8</td>
-<td align="left">7</td>
-<td align="left">9</td>
-</tr>
-<tr class="even">
 <td align="left">MS-PARCHEGGIO-COLOMBAROTTO</td>
-<td align="left">18</td>
-<td align="left">5</td>
-<td align="left">2</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">18</td>
+<td align="right">5</td>
+<td align="right">2</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">MS-VIA-CARRIONA</td>
-<td align="left">73</td>
-<td align="left">62</td>
-<td align="left">57</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">73</td>
+<td align="right">62</td>
+<td align="right">57</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">MS-VIA-FRASSINA</td>
-<td align="left">211</td>
-<td align="left">166</td>
-<td align="left">161</td>
-<td align="left">51</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">211</td>
+<td align="right">166</td>
+<td align="right">161</td>
+<td align="right">51</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">MS-VIA-GALVANI</td>
-<td align="left">36</td>
-<td align="left">25</td>
-<td align="left">20</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">36</td>
+<td align="right">25</td>
+<td align="right">20</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">MS-CAPUCCINI</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
+<td align="left">MS-CARRIONA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">30</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">MS-COLOMBAROTTO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">9</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">MS-GALVANI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">7</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
 <td align="left">PI-BORGHETTO</td>
-<td align="left">36</td>
-<td align="left">31</td>
-<td align="left">31</td>
-<td align="left">44</td>
-<td align="left">35</td>
-<td align="left">31</td>
-<td align="left">18</td>
-</tr>
-<tr class="odd">
-<td align="left">PI-CASCINA</td>
-<td align="left">93</td>
-<td align="left">82</td>
-<td align="left">50</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">36</td>
+<td align="right">31</td>
+<td align="right">31</td>
+<td align="right">44</td>
+<td align="right">35</td>
+<td align="right">31</td>
+<td align="right">18</td>
 </tr>
 <tr class="even">
-<td align="left">PI-LARI</td>
-<td align="left">21</td>
-<td align="left">14</td>
-<td align="left">43</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="left">PI-CASCINA</td>
+<td align="right">93</td>
+<td align="right">82</td>
+<td align="right">50</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">PI-MONTECERBOLI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">0</td>
+<td align="left">PI-LARI</td>
+<td align="right">21</td>
+<td align="right">14</td>
+<td align="right">43</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">PI-MONTECERBOLI-BIS</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">PI-NAVACCHIO</td>
-<td align="left">72</td>
-<td align="left">49</td>
-<td align="left">31</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">72</td>
+<td align="right">49</td>
+<td align="right">31</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">PI-ORATOIO</td>
-<td align="left">40</td>
-<td align="left">45</td>
-<td align="left">29</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">40</td>
+<td align="right">45</td>
+<td align="right">29</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">PI-PONTEDERA</td>
+<td align="right">34</td>
+<td align="right">16</td>
+<td align="right">25</td>
+<td align="right">27</td>
+<td align="right">9</td>
+<td align="right">19</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">PI-SAN-ROMANO</td>
+<td align="right">60</td>
+<td align="right">38</td>
+<td align="right">28</td>
+<td align="right">18</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">PI-SANTA-CROCE-COOP</td>
+<td align="right">35</td>
+<td align="right">32</td>
+<td align="right">33</td>
+<td align="right">47</td>
+<td align="right">33</td>
+<td align="right">27</td>
+<td align="right">22</td>
+</tr>
+<tr class="even">
+<td align="left">PI-SANTA-CROCE-SERAO</td>
+<td align="right">20</td>
+<td align="right">6</td>
+<td align="right">10</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">PI-PASSI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">13</td>
-<td align="left">28</td>
-<td align="left">17</td>
-<td align="left">22</td>
-<td align="left">10</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">13</td>
+<td align="right">28</td>
+<td align="right">17</td>
+<td align="right">22</td>
+<td align="right">10</td>
 </tr>
 <tr class="even">
-<td align="left">PI-PONTEDERA</td>
-<td align="left">34</td>
-<td align="left">16</td>
-<td align="left">25</td>
-<td align="left">27</td>
-<td align="left">9</td>
-<td align="left">19</td>
-<td align="left">4</td>
+<td align="left">PI-MONTECERBOLI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
 </tr>
 <tr class="odd">
-<td align="left">PI-SAN-ROMANO</td>
-<td align="left">60</td>
-<td align="left">38</td>
-<td align="left">28</td>
-<td align="left">18</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">PI-SANTA-CROCE-COOP</td>
-<td align="left">35</td>
-<td align="left">32</td>
-<td align="left">33</td>
-<td align="left">47</td>
-<td align="left">33</td>
-<td align="left">27</td>
-<td align="left">22</td>
-</tr>
-<tr class="odd">
-<td align="left">PI-SANTA-CROCE-SERAO</td>
-<td align="left">20</td>
-<td align="left">6</td>
-<td align="left">10</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
 <td align="left">PO-FERRUCCI</td>
-<td align="left">41</td>
-<td align="left">51</td>
-<td align="left">45</td>
-<td align="left">50</td>
-<td align="left">44</td>
-<td align="left">37</td>
-<td align="left">28</td>
-</tr>
-<tr class="odd">
-<td align="left">PO-FONTANELLE</td>
-<td align="left">39</td>
-<td align="left">53</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">41</td>
+<td align="right">51</td>
+<td align="right">45</td>
+<td align="right">50</td>
+<td align="right">44</td>
+<td align="right">37</td>
+<td align="right">28</td>
 </tr>
 <tr class="even">
-<td align="left">PO-POGGIO-A-CAIANO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">18</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="left">PO-FONTANELLE</td>
+<td align="right">39</td>
+<td align="right">53</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">PO-ROMA</td>
-<td align="left">29</td>
-<td align="left">27</td>
-<td align="left">30</td>
-<td align="left">43</td>
-<td align="left">43</td>
-<td align="left">35</td>
-<td align="left">30</td>
+<td align="right">29</td>
+<td align="right">27</td>
+<td align="right">30</td>
+<td align="right">43</td>
+<td align="right">43</td>
+<td align="right">35</td>
+<td align="right">30</td>
 </tr>
 <tr class="even">
 <td align="left">PO-STROZZI</td>
-<td align="left">28</td>
-<td align="left">28</td>
-<td align="left">36</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">28</td>
+<td align="right">28</td>
+<td align="right">36</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">PO-XX-SETTEMBRE</td>
-<td align="left">35</td>
-<td align="left">31</td>
-<td align="left">34</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">35</td>
+<td align="right">31</td>
+<td align="right">34</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
-<td align="left">PT-MONT-VIA-MERLINI</td>
-<td align="left">59</td>
-<td align="left">46</td>
-<td align="left">30</td>
-<td align="left">22</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="left">PO-POGGIO-A-CAIANO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">18</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">PT-MONTALE</td>
-<td align="left">70</td>
-<td align="left">35</td>
-<td align="left">28</td>
-<td align="left">65</td>
-<td align="left">63</td>
-<td align="left">45</td>
-<td align="left">32</td>
+<td align="left">PT-MONT-VIA-MERLINI</td>
+<td align="right">59</td>
+<td align="right">46</td>
+<td align="right">30</td>
+<td align="right">22</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
-<td align="left">PT-SIGNORELLI</td>
-<td align="left">.</td>
-<td align="left">12</td>
-<td align="left">19</td>
-<td align="left">25</td>
-<td align="left">22</td>
-<td align="left">28</td>
-<td align="left">12</td>
+<td align="left">PT-MONTALE</td>
+<td align="right">70</td>
+<td align="right">35</td>
+<td align="right">28</td>
+<td align="right">65</td>
+<td align="right">63</td>
+<td align="right">45</td>
+<td align="right">32</td>
 </tr>
 <tr class="odd">
 <td align="left">PT-ZAMENHOF</td>
-<td align="left">51</td>
-<td align="left">57</td>
-<td align="left">41</td>
-<td align="left">18</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">51</td>
+<td align="right">57</td>
+<td align="right">41</td>
+<td align="right">18</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
-<td align="left">SI-BRACCI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">7</td>
-</tr>
-<tr class="odd">
-<td align="left">SI-DE-AMICIS</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">12</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">SI-DUE-PONTI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">35</td>
-<td align="left">34</td>
-<td align="left">25</td>
-<td align="left">15</td>
+<td align="left">PT-SIGNORELLI</td>
+<td align="right">NA</td>
+<td align="right">12</td>
+<td align="right">19</td>
+<td align="right">25</td>
+<td align="right">22</td>
+<td align="right">28</td>
+<td align="right">12</td>
 </tr>
 <tr class="odd">
 <td align="left">SI-LARGO-CAMPIDOGLIO</td>
-<td align="left">103</td>
-<td align="left">89</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">103</td>
+<td align="right">89</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">SI-LOC-DUE-PONTI</td>
-<td align="left">5</td>
-<td align="left">0</td>
-<td align="left">4</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">SI-DE-AMICIS</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">12</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">SI-DUE-PONTI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">35</td>
+<td align="right">34</td>
+<td align="right">25</td>
+<td align="right">15</td>
 </tr>
 <tr class="odd">
 <td align="left">SI-POGGIBONSI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">20</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">1</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">SI-BRACCI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">7</td>
 </tr>
 </tbody>
 </table>
@@ -1325,892 +1330,886 @@ m &lt;- tbl_df(at_pm) %&gt;%
        group_by(stazione, year) %&gt;%
        summarise(val_mean = round(mean(value), 0)) %&gt;%
        select(stazione, year, val_mean) %&gt;%
-       distinct(stazione, year)
+       ungroup() %&gt;%
+       arrange(year, stazione)
 
-data.frame(t(spread(m, stazione, val_mean, fill = &quot;.&quot;))) %&gt;% knitr::kable()</code></pre>
+mt &lt;- reshape(data.frame(m), timevar = &quot;year&quot;, idvar = &quot;stazione&quot;, direction = &quot;wide&quot;)
+rownames(mt) &lt;- NULL
+names(mt) &lt;- sub(&quot;val_mean.&quot;, &quot;&quot;, names(mt))
+mt %&gt;% knitr::kable()</code></pre>
 <table>
 <thead>
 <tr class="header">
-<th align="left"></th>
-<th align="left">X1</th>
-<th align="left">X2</th>
-<th align="left">X3</th>
-<th align="left">X4</th>
-<th align="left">X5</th>
-<th align="left">X6</th>
-<th align="left">X7</th>
+<th align="left">stazione</th>
+<th align="right">2008</th>
+<th align="right">2009</th>
+<th align="right">2010</th>
+<th align="right">2011</th>
+<th align="right">2012</th>
+<th align="right">2013</th>
+<th align="right">2014</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">year</td>
-<td align="left">2008</td>
-<td align="left">2009</td>
-<td align="left">2010</td>
-<td align="left">2011</td>
-<td align="left">2012</td>
-<td align="left">2013</td>
-<td align="left">2014</td>
-</tr>
-<tr class="even">
-<td align="left">AR-ACROPOLI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">23</td>
-<td align="left">21</td>
-</tr>
-<tr class="odd">
 <td align="left">AR-CASA-STABBI</td>
-<td align="left">12</td>
-<td align="left">11</td>
-<td align="left">10</td>
-<td align="left">13</td>
-<td align="left">13</td>
-<td align="left">9</td>
-<td align="left">11</td>
+<td align="right">12</td>
+<td align="right">11</td>
+<td align="right">10</td>
+<td align="right">13</td>
+<td align="right">13</td>
+<td align="right">9</td>
+<td align="right">11</td>
 </tr>
 <tr class="even">
 <td align="left">AR-PIAZZA-REPUBBLICA</td>
-<td align="left">32</td>
-<td align="left">30</td>
-<td align="left">27</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">32</td>
+<td align="right">30</td>
+<td align="right">27</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">AR-REPUBBLICA</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">28</td>
-<td align="left">28</td>
-<td align="left">27</td>
-<td align="left">27</td>
-</tr>
-<tr class="even">
 <td align="left">AR-VIA-FIORENTINA</td>
-<td align="left">33</td>
-<td align="left">30</td>
-<td align="left">27</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">33</td>
+<td align="right">30</td>
+<td align="right">27</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">FI-BASSI</td>
-<td align="left">29</td>
-<td align="left">27</td>
-<td align="left">22</td>
-<td align="left">24</td>
-<td align="left">23</td>
-<td align="left">20</td>
-<td align="left">18</td>
-</tr>
-<tr class="even">
-<td align="left">FI-BOBOLI</td>
-<td align="left">25</td>
-<td align="left">25</td>
-<td align="left">23</td>
-<td align="left">26</td>
-<td align="left">23</td>
-<td align="left">20</td>
-<td align="left">19</td>
+<td align="right">29</td>
+<td align="right">27</td>
+<td align="right">22</td>
+<td align="right">24</td>
+<td align="right">23</td>
+<td align="right">20</td>
+<td align="right">18</td>
 </tr>
 <tr class="odd">
-<td align="left">FI-CALENZANO-BOCCACCIO</td>
-<td align="left">33</td>
-<td align="left">24</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="left">FI-BOBOLI</td>
+<td align="right">25</td>
+<td align="right">25</td>
+<td align="right">23</td>
+<td align="right">26</td>
+<td align="right">23</td>
+<td align="right">20</td>
+<td align="right">19</td>
 </tr>
 <tr class="even">
-<td align="left">FI-CALENZANO-GIOVANNI</td>
-<td align="left">.</td>
-<td align="left">37</td>
-<td align="left">35</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="left">FI-CALENZANO-BOCCACCIO</td>
+<td align="right">33</td>
+<td align="right">24</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">FI-CAMPI-BISENZIO</td>
-<td align="left">31</td>
-<td align="left">34</td>
-<td align="left">32</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">31</td>
+<td align="right">34</td>
+<td align="right">32</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">FI-EMPOLI-RIDOLFI</td>
-<td align="left">28</td>
-<td align="left">32</td>
-<td align="left">34</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">28</td>
+<td align="right">32</td>
+<td align="right">34</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">FI-GRAMSCI</td>
-<td align="left">44</td>
-<td align="left">43</td>
-<td align="left">38</td>
-<td align="left">38</td>
-<td align="left">36</td>
-<td align="left">34</td>
-<td align="left">29</td>
+<td align="right">44</td>
+<td align="right">43</td>
+<td align="right">38</td>
+<td align="right">38</td>
+<td align="right">36</td>
+<td align="right">34</td>
+<td align="right">29</td>
 </tr>
 <tr class="even">
-<td align="left">FI-GREVE</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">31</td>
-<td align="left">20</td>
-<td align="left">20</td>
-<td align="left">.</td>
-</tr>
-<tr class="odd">
 <td align="left">FI-GREVE-PASSO-PECORAI</td>
-<td align="left">24</td>
-<td align="left">23</td>
-<td align="left">27</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">FI-INCISA</td>
-<td align="left">.</td>
-<td align="left">21</td>
-<td align="left">23</td>
-<td align="left">32</td>
-<td align="left">33</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">24</td>
+<td align="right">23</td>
+<td align="right">27</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">FI-MONTELUPO-VIA-ASIA</td>
-<td align="left">32</td>
-<td align="left">26</td>
-<td align="left">22</td>
-<td align="left">35</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">32</td>
+<td align="right">26</td>
+<td align="right">22</td>
+<td align="right">35</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">FI-MOSSE</td>
-<td align="left">42</td>
-<td align="left">43</td>
-<td align="left">39</td>
-<td align="left">38</td>
-<td align="left">39</td>
-<td align="left">30</td>
-<td align="left">23</td>
+<td align="right">42</td>
+<td align="right">43</td>
+<td align="right">39</td>
+<td align="right">38</td>
+<td align="right">39</td>
+<td align="right">30</td>
+<td align="right">23</td>
 </tr>
 <tr class="odd">
-<td align="left">FI-PONTASSIEVE</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">20</td>
-<td align="left">20</td>
-<td align="left">19</td>
-<td align="left">17</td>
-</tr>
-<tr class="even">
-<td align="left">FI-PONTASSIEVE-CURIEL</td>
-<td align="left">.</td>
-<td align="left">23</td>
-<td align="left">19</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="odd">
-<td align="left">FI-SCANDICCI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">29</td>
-<td align="left">27</td>
-<td align="left">24</td>
-<td align="left">20</td>
-</tr>
-<tr class="even">
 <td align="left">FI-SCANDICCI-BUOZZI</td>
-<td align="left">35</td>
-<td align="left">35</td>
-<td align="left">33</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="odd">
-<td align="left">FI-SESTO</td>
-<td align="left">.</td>
-<td align="left">35</td>
-<td align="left">34</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">35</td>
+<td align="right">35</td>
+<td align="right">33</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">FI-SIGNA</td>
-<td align="left">48</td>
-<td align="left">41</td>
-<td align="left">36</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">25</td>
+<td align="right">48</td>
+<td align="right">41</td>
+<td align="right">36</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">25</td>
 </tr>
 <tr class="odd">
-<td align="left">FI-SIGNA-ROMA</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">48</td>
-<td align="left">30</td>
-<td align="left">30</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">GR-SONNINO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">30</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="odd">
-<td align="left">GR-URSS</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">19</td>
-<td align="left">17</td>
-<td align="left">17</td>
-</tr>
-<tr class="even">
 <td align="left">GR-VIA-URSS</td>
-<td align="left">22</td>
-<td align="left">23</td>
-<td align="left">18</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">22</td>
+<td align="right">23</td>
+<td align="right">18</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">GR-VIALE-SONNINO</td>
-<td align="left">35</td>
-<td align="left">35</td>
-<td align="left">37</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">LI-CAPPIELLO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">17</td>
-</tr>
-<tr class="odd">
-<td align="left">LI-CARDUCCI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">28</td>
-<td align="left">27</td>
-<td align="left">23</td>
-<td align="left">23</td>
-</tr>
-<tr class="even">
-<td align="left">LI-COTONE</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">27</td>
-<td align="left">25</td>
-<td align="left">23</td>
-<td align="left">21</td>
+<td align="right">35</td>
+<td align="right">35</td>
+<td align="right">37</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">LI-COTONE-RETE-LI</td>
-<td align="left">31</td>
-<td align="left">29</td>
-<td align="left">27</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">LI-GIARDINI-PUBBLICI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">36</td>
-<td align="left">30</td>
-</tr>
-<tr class="odd">
-<td align="left">LI-GOBETTI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">21</td>
-<td align="left">19</td>
-<td align="left">19</td>
-<td align="left">17</td>
-</tr>
-<tr class="even">
-<td align="left">LI-LAPIRA</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">20</td>
-</tr>
-<tr class="odd">
-<td align="left">LI-MAUROGORDATO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">14</td>
-<td align="left">13</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">LI-PIOMBINO-PARCO-VIII-MARZO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">18</td>
-</tr>
-<tr class="odd">
-<td align="left">LI-POGGIO-SAN-ROCCO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">19</td>
-<td align="left">16</td>
-<td align="left">18</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">LI-POGGIO-SAN-ROCCO-ROSIGNANO</td>
-<td align="left">.</td>
-<td align="left">17</td>
-<td align="left">17</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="odd">
-<td align="left">LI-VENETO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">29</td>
-<td align="left">26</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">31</td>
+<td align="right">29</td>
+<td align="right">27</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">LI-VIA-GOBETTI</td>
-<td align="left">26</td>
-<td align="left">21</td>
-<td align="left">19</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">26</td>
+<td align="right">21</td>
+<td align="right">19</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">LI-VIA-VENETO</td>
-<td align="left">29</td>
-<td align="left">28</td>
-<td align="left">27</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">29</td>
+<td align="right">28</td>
+<td align="right">27</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">LI-VIALE-CARDUCCI</td>
-<td align="left">35</td>
-<td align="left">32</td>
-<td align="left">27</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">35</td>
+<td align="right">32</td>
+<td align="right">27</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">LI-VILLA-MAUROGORDATO</td>
-<td align="left">17</td>
-<td align="left">17</td>
-<td align="left">14</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">17</td>
+<td align="right">17</td>
+<td align="right">14</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">LU-2VIAREGGIO</td>
-<td align="left">35</td>
-<td align="left">31</td>
-<td align="left">26</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">35</td>
+<td align="right">31</td>
+<td align="right">26</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">LU-CAPANNORI</td>
-<td align="left">29</td>
-<td align="left">27</td>
-<td align="left">27</td>
-<td align="left">31</td>
-<td align="left">26</td>
-<td align="left">24</td>
-<td align="left">29</td>
+<td align="right">29</td>
+<td align="right">27</td>
+<td align="right">27</td>
+<td align="right">31</td>
+<td align="right">26</td>
+<td align="right">24</td>
+<td align="right">29</td>
 </tr>
 <tr class="even">
 <td align="left">LU-MICHELETTO</td>
-<td align="left">31</td>
-<td align="left">33</td>
-<td align="left">31</td>
-<td align="left">33</td>
-<td align="left">32</td>
-<td align="left">29</td>
-<td align="left">28</td>
+<td align="right">31</td>
+<td align="right">33</td>
+<td align="right">31</td>
+<td align="right">33</td>
+<td align="right">32</td>
+<td align="right">29</td>
+<td align="right">28</td>
 </tr>
 <tr class="odd">
 <td align="left">LU-PORCARI</td>
-<td align="left">30</td>
-<td align="left">29</td>
-<td align="left">28</td>
-<td align="left">31</td>
-<td align="left">26</td>
-<td align="left">24</td>
-<td align="left">38</td>
+<td align="right">30</td>
+<td align="right">29</td>
+<td align="right">28</td>
+<td align="right">31</td>
+<td align="right">26</td>
+<td align="right">24</td>
+<td align="right">38</td>
 </tr>
 <tr class="even">
 <td align="left">LU-TANGENZIALE</td>
-<td align="left">48</td>
-<td align="left">44</td>
-<td align="left">44</td>
-<td align="left">57</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">48</td>
+<td align="right">44</td>
+<td align="right">44</td>
+<td align="right">57</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">LU-VIAREGGIO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">30</td>
-<td align="left">27</td>
-<td align="left">27</td>
-<td align="left">24</td>
-</tr>
-<tr class="even">
-<td align="left">MS-CAPUCCINI</td>
-<td align="left">.</td>
-<td align="left">19</td>
-<td align="left">18</td>
-<td align="left">18</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="odd">
-<td align="left">MS-CARRIONA</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">32</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">MS-COLOMBAROTTO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">24</td>
-<td align="left">24</td>
-<td align="left">24</td>
-<td align="left">22</td>
-</tr>
-<tr class="odd">
-<td align="left">MS-GALVANI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">25</td>
-<td align="left">25</td>
-<td align="left">24</td>
-<td align="left">25</td>
-</tr>
-<tr class="even">
 <td align="left">MS-PARCHEGGIO-COLOMBAROTTO</td>
-<td align="left">26</td>
-<td align="left">24</td>
-<td align="left">22</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">26</td>
+<td align="right">24</td>
+<td align="right">22</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">MS-VIA-CARRIONA</td>
-<td align="left">36</td>
-<td align="left">35</td>
-<td align="left">36</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">36</td>
+<td align="right">35</td>
+<td align="right">36</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">MS-VIA-FRASSINA</td>
-<td align="left">66</td>
-<td align="left">55</td>
-<td align="left">51</td>
-<td align="left">45</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">66</td>
+<td align="right">55</td>
+<td align="right">51</td>
+<td align="right">45</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">MS-VIA-GALVANI</td>
-<td align="left">32</td>
-<td align="left">29</td>
-<td align="left">27</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">32</td>
+<td align="right">29</td>
+<td align="right">27</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">PI-BORGHETTO</td>
-<td align="left">29</td>
-<td align="left">32</td>
-<td align="left">29</td>
-<td align="left">30</td>
-<td align="left">28</td>
-<td align="left">26</td>
-<td align="left">25</td>
-</tr>
-<tr class="odd">
-<td align="left">PI-CASCINA</td>
-<td align="left">43</td>
-<td align="left">40</td>
-<td align="left">35</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">29</td>
+<td align="right">32</td>
+<td align="right">29</td>
+<td align="right">30</td>
+<td align="right">28</td>
+<td align="right">26</td>
+<td align="right">25</td>
 </tr>
 <tr class="even">
-<td align="left">PI-LARI</td>
-<td align="left">26</td>
-<td align="left">28</td>
-<td align="left">31</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="left">PI-CASCINA</td>
+<td align="right">43</td>
+<td align="right">40</td>
+<td align="right">35</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">PI-MONTECERBOLI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">15</td>
-<td align="left">14</td>
-<td align="left">10</td>
-<td align="left">8</td>
+<td align="left">PI-LARI</td>
+<td align="right">26</td>
+<td align="right">28</td>
+<td align="right">31</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">PI-MONTECERBOLI-BIS</td>
-<td align="left">15</td>
-<td align="left">15</td>
-<td align="left">13</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">15</td>
+<td align="right">15</td>
+<td align="right">13</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">PI-NAVACCHIO</td>
-<td align="left">39</td>
-<td align="left">36</td>
-<td align="left">30</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">39</td>
+<td align="right">36</td>
+<td align="right">30</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">PI-ORATOIO</td>
-<td align="left">34</td>
-<td align="left">36</td>
-<td align="left">32</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">34</td>
+<td align="right">36</td>
+<td align="right">32</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">PI-PASSI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">25</td>
-<td align="left">26</td>
-<td align="left">25</td>
-<td align="left">23</td>
-<td align="left">21</td>
-</tr>
-<tr class="even">
 <td align="left">PI-PONTEDERA</td>
-<td align="left">31</td>
-<td align="left">30</td>
-<td align="left">30</td>
-<td align="left">28</td>
-<td align="left">25</td>
-<td align="left">23</td>
-<td align="left">21</td>
+<td align="right">31</td>
+<td align="right">30</td>
+<td align="right">30</td>
+<td align="right">28</td>
+<td align="right">25</td>
+<td align="right">23</td>
+<td align="right">21</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">PI-SAN-ROMANO</td>
-<td align="left">36</td>
-<td align="left">33</td>
-<td align="left">29</td>
-<td align="left">30</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">36</td>
+<td align="right">33</td>
+<td align="right">29</td>
+<td align="right">30</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">PI-SANTA-CROCE-COOP</td>
-<td align="left">29</td>
-<td align="left">29</td>
-<td align="left">30</td>
-<td align="left">31</td>
-<td align="left">28</td>
-<td align="left">27</td>
-<td align="left">27</td>
+<td align="right">29</td>
+<td align="right">29</td>
+<td align="right">30</td>
+<td align="right">31</td>
+<td align="right">28</td>
+<td align="right">27</td>
+<td align="right">27</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">PI-SANTA-CROCE-SERAO</td>
-<td align="left">25</td>
-<td align="left">26</td>
-<td align="left">24</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">PO-FERRUCCI</td>
-<td align="left">32</td>
-<td align="left">34</td>
-<td align="left">33</td>
-<td align="left">35</td>
-<td align="left">31</td>
-<td align="left">30</td>
-<td align="left">25</td>
+<td align="right">25</td>
+<td align="right">26</td>
+<td align="right">24</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">PO-FONTANELLE</td>
-<td align="left">32</td>
-<td align="left">28</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="left">PO-FERRUCCI</td>
+<td align="right">32</td>
+<td align="right">34</td>
+<td align="right">33</td>
+<td align="right">35</td>
+<td align="right">31</td>
+<td align="right">30</td>
+<td align="right">25</td>
 </tr>
 <tr class="even">
-<td align="left">PO-POGGIO-A-CAIANO</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">29</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="left">PO-FONTANELLE</td>
+<td align="right">32</td>
+<td align="right">28</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">PO-ROMA</td>
-<td align="left">26</td>
-<td align="left">25</td>
-<td align="left">31</td>
-<td align="left">30</td>
-<td align="left">30</td>
-<td align="left">27</td>
-<td align="left">25</td>
+<td align="right">26</td>
+<td align="right">25</td>
+<td align="right">31</td>
+<td align="right">30</td>
+<td align="right">30</td>
+<td align="right">27</td>
+<td align="right">25</td>
 </tr>
 <tr class="even">
 <td align="left">PO-STROZZI</td>
-<td align="left">27</td>
-<td align="left">28</td>
-<td align="left">32</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">27</td>
+<td align="right">28</td>
+<td align="right">32</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">PO-XX-SETTEMBRE</td>
-<td align="left">34</td>
-<td align="left">31</td>
-<td align="left">31</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">34</td>
+<td align="right">31</td>
+<td align="right">31</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">PT-MONT-VIA-MERLINI</td>
-<td align="left">35</td>
-<td align="left">33</td>
-<td align="left">28</td>
-<td align="left">50</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">35</td>
+<td align="right">33</td>
+<td align="right">28</td>
+<td align="right">50</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">PT-MONTALE</td>
-<td align="left">39</td>
-<td align="left">33</td>
-<td align="left">29</td>
-<td align="left">34</td>
-<td align="left">34</td>
-<td align="left">29</td>
-<td align="left">26</td>
+<td align="right">39</td>
+<td align="right">33</td>
+<td align="right">29</td>
+<td align="right">34</td>
+<td align="right">34</td>
+<td align="right">29</td>
+<td align="right">26</td>
 </tr>
 <tr class="even">
-<td align="left">PT-SIGNORELLI</td>
-<td align="left">.</td>
-<td align="left">37</td>
-<td align="left">26</td>
-<td align="left">25</td>
-<td align="left">24</td>
-<td align="left">23</td>
-<td align="left">21</td>
-</tr>
-<tr class="odd">
 <td align="left">PT-ZAMENHOF</td>
-<td align="left">34</td>
-<td align="left">35</td>
-<td align="left">31</td>
-<td align="left">45</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">SI-BRACCI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">31</td>
-</tr>
-<tr class="odd">
-<td align="left">SI-DE-AMICIS</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">29</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-</tr>
-<tr class="even">
-<td align="left">SI-DUE-PONTI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">33</td>
-<td align="left">34</td>
-<td align="left">30</td>
-<td align="left">32</td>
+<td align="right">34</td>
+<td align="right">35</td>
+<td align="right">31</td>
+<td align="right">45</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">SI-LARGO-CAMPIDOGLIO</td>
-<td align="left">45</td>
-<td align="left">44</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">45</td>
+<td align="right">44</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">SI-LOC-DUE-PONTI</td>
-<td align="left">20</td>
-<td align="left">19</td>
-<td align="left">28</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
+<td align="right">20</td>
+<td align="right">19</td>
+<td align="right">28</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
+<td align="left">FI-CALENZANO-GIOVANNI</td>
+<td align="right">NA</td>
+<td align="right">37</td>
+<td align="right">35</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">FI-INCISA</td>
+<td align="right">NA</td>
+<td align="right">21</td>
+<td align="right">23</td>
+<td align="right">32</td>
+<td align="right">33</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">FI-PONTASSIEVE-CURIEL</td>
+<td align="right">NA</td>
+<td align="right">23</td>
+<td align="right">19</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">FI-SESTO</td>
+<td align="right">NA</td>
+<td align="right">35</td>
+<td align="right">34</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">LI-POGGIO-SAN-ROCCO-ROSIGNANO</td>
+<td align="right">NA</td>
+<td align="right">17</td>
+<td align="right">17</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">MS-CAPUCCINI</td>
+<td align="right">NA</td>
+<td align="right">19</td>
+<td align="right">18</td>
+<td align="right">18</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">PT-SIGNORELLI</td>
+<td align="right">NA</td>
+<td align="right">37</td>
+<td align="right">26</td>
+<td align="right">25</td>
+<td align="right">24</td>
+<td align="right">23</td>
+<td align="right">21</td>
+</tr>
+<tr class="even">
+<td align="left">PI-PASSI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">25</td>
+<td align="right">26</td>
+<td align="right">25</td>
+<td align="right">23</td>
+<td align="right">21</td>
+</tr>
+<tr class="odd">
+<td align="left">SI-DE-AMICIS</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">29</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">AR-REPUBBLICA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">28</td>
+<td align="right">28</td>
+<td align="right">27</td>
+<td align="right">27</td>
+</tr>
+<tr class="odd">
+<td align="left">FI-GREVE</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">31</td>
+<td align="right">20</td>
+<td align="right">20</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">FI-PONTASSIEVE</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">20</td>
+<td align="right">20</td>
+<td align="right">19</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">FI-SCANDICCI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">29</td>
+<td align="right">27</td>
+<td align="right">24</td>
+<td align="right">20</td>
+</tr>
+<tr class="even">
+<td align="left">FI-SIGNA-ROMA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">48</td>
+<td align="right">30</td>
+<td align="right">30</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">LI-CARDUCCI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">28</td>
+<td align="right">27</td>
+<td align="right">23</td>
+<td align="right">23</td>
+</tr>
+<tr class="even">
+<td align="left">LI-COTONE</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">27</td>
+<td align="right">25</td>
+<td align="right">23</td>
+<td align="right">21</td>
+</tr>
+<tr class="odd">
+<td align="left">LI-GOBETTI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">21</td>
+<td align="right">19</td>
+<td align="right">19</td>
+<td align="right">17</td>
+</tr>
+<tr class="even">
+<td align="left">LI-MAUROGORDATO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">14</td>
+<td align="right">13</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">LI-POGGIO-SAN-ROCCO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">19</td>
+<td align="right">16</td>
+<td align="right">18</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">LI-VENETO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">29</td>
+<td align="right">26</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">LU-VIAREGGIO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">30</td>
+<td align="right">27</td>
+<td align="right">27</td>
+<td align="right">24</td>
+</tr>
+<tr class="even">
+<td align="left">MS-CARRIONA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">32</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">MS-COLOMBAROTTO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">24</td>
+<td align="right">24</td>
+<td align="right">24</td>
+<td align="right">22</td>
+</tr>
+<tr class="even">
+<td align="left">MS-GALVANI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">25</td>
+<td align="right">25</td>
+<td align="right">24</td>
+<td align="right">25</td>
+</tr>
+<tr class="odd">
+<td align="left">PI-MONTECERBOLI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">15</td>
+<td align="right">14</td>
+<td align="right">10</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">PO-POGGIO-A-CAIANO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">29</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">SI-DUE-PONTI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">33</td>
+<td align="right">34</td>
+<td align="right">30</td>
+<td align="right">32</td>
+</tr>
+<tr class="even">
 <td align="left">SI-POGGIBONSI</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">.</td>
-<td align="left">29</td>
-<td align="left">22</td>
-<td align="left">18</td>
-<td align="left">18</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">29</td>
+<td align="right">22</td>
+<td align="right">18</td>
+<td align="right">18</td>
+</tr>
+<tr class="odd">
+<td align="left">GR-SONNINO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">30</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">GR-URSS</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">19</td>
+<td align="right">17</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">AR-ACROPOLI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">23</td>
+<td align="right">21</td>
+</tr>
+<tr class="even">
+<td align="left">LI-GIARDINI-PUBBLICI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">36</td>
+<td align="right">30</td>
+</tr>
+<tr class="odd">
+<td align="left">LI-CAPPIELLO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">17</td>
+</tr>
+<tr class="even">
+<td align="left">LI-LAPIRA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">20</td>
+</tr>
+<tr class="odd">
+<td align="left">LI-PIOMBINO-PARCO-VIII-MARZO</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">18</td>
+</tr>
+<tr class="even">
+<td align="left">SI-BRACCI</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">31</td>
 </tr>
 </tbody>
 </table>
@@ -2348,19 +2347,19 @@ x4 &lt;- tbl_df(at_pm) %&gt;%
        select(year, month, pct_na)
 
 x4 &lt;- reshape(data.frame(x4), idvar = &quot;month&quot;, timevar= &quot;year&quot;, direction = &quot;wide&quot;)
-names(x4) &lt;- sub(&quot;pct_na&quot;, &quot;x&quot;, names(x4))
+names(x4) &lt;- sub(&quot;pct_na.&quot;, &quot;&quot;, names(x4))
 x4 %&gt;% knitr::kable()</code></pre>
 <table>
 <thead>
 <tr class="header">
 <th align="right">month</th>
-<th align="right">x.2008</th>
-<th align="right">x.2009</th>
-<th align="right">x.2010</th>
-<th align="right">x.2011</th>
-<th align="right">x.2012</th>
-<th align="right">x.2013</th>
-<th align="right">x.2014</th>
+<th align="right">2008</th>
+<th align="right">2009</th>
+<th align="right">2010</th>
+<th align="right">2011</th>
+<th align="right">2012</th>
+<th align="right">2013</th>
+<th align="right">2014</th>
 </tr>
 </thead>
 <tbody>
@@ -2495,7 +2494,7 @@ x4 %&gt;% knitr::kable()</code></pre>
 #&gt;  language (EN)                                       
 #&gt;  collate  German_Germany.1252                        
 #&gt;  tz       Europe/Berlin                              
-#&gt;  date     2016-02-07
+#&gt;  date     2016-02-08
 #&gt; Packages ------------------------------------------------------------------
 #&gt;  package     * version    date       source                         
 #&gt;  AriaToscana * 0.1.0.9000 2016-02-07 local                          
@@ -2515,7 +2514,6 @@ x4 %&gt;% knitr::kable()</code></pre>
 #&gt;  labeling      0.3        2014-08-23 CRAN (R 3.2.3)                 
 #&gt;  lattice       0.20-33    2015-07-14 CRAN (R 3.2.3)                 
 #&gt;  lazyeval      0.1.10     2015-01-02 CRAN (R 3.2.3)                 
-#&gt;  lubridate   * 1.5.0      2015-12-03 CRAN (R 3.2.3)                 
 #&gt;  magrittr      1.5        2014-11-22 CRAN (R 3.2.3)                 
 #&gt;  Matrix        1.2-3      2015-11-28 CRAN (R 3.2.3)                 
 #&gt;  memoise       0.2.1      2014-04-22 CRAN (R 3.2.3)                 
