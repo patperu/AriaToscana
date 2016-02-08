@@ -8,6 +8,8 @@ Description: This package contains air pollution data for the years 2008-2014 fr
 License: CC0
 LazyData: TRUE
 RoxygenNote: 5.0.1
+Depends:
+    R (>= 2.10)
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr
