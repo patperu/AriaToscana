@@ -475,6 +475,63 @@ addmargins(table(at_inq$parameter, at_inq$year)) %&gt;%
 </tbody>
 </table>
 <pre class="r"><code>
+addmargins(table(at_pm$parameter, at_pm$year)) %&gt;% 
+  knitr::kable(format.args = list(big.mark = '.', decimal.mark = ','))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">2008</th>
+<th align="right">2009</th>
+<th align="right">2010</th>
+<th align="right">2011</th>
+<th align="right">2012</th>
+<th align="right">2013</th>
+<th align="right">2014</th>
+<th align="right">2015</th>
+<th align="right">Sum</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">PM10</td>
+<td align="right">18.300</td>
+<td align="right">20.805</td>
+<td align="right">20.440</td>
+<td align="right">15.695</td>
+<td align="right">13.176</td>
+<td align="right">12.410</td>
+<td align="right">13.140</td>
+<td align="right">12.775</td>
+<td align="right">126.741</td>
+</tr>
+<tr class="even">
+<td align="left">PM2.5</td>
+<td align="right">1.464</td>
+<td align="right">2.555</td>
+<td align="right">4.380</td>
+<td align="right">4.380</td>
+<td align="right">4.392</td>
+<td align="right">5.110</td>
+<td align="right">5.475</td>
+<td align="right">6.205</td>
+<td align="right">33.961</td>
+</tr>
+<tr class="odd">
+<td align="left">Sum</td>
+<td align="right">19.764</td>
+<td align="right">23.360</td>
+<td align="right">24.820</td>
+<td align="right">20.075</td>
+<td align="right">17.568</td>
+<td align="right">17.520</td>
+<td align="right">18.615</td>
+<td align="right">18.980</td>
+<td align="right">160.702</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>
 # If 4 or more measures are 'NA', then 'NA' for the whole time frame (br)
 ff &lt;- function(L) ifelse(sum(is.na(L)) &gt;= 4, NA, mean(L, na.rm = TRUE))
 

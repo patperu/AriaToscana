@@ -66,6 +66,22 @@ addmargins(table(at_inq$parameter, at_inq$year)) %>%
 
 ```r
 
+addmargins(table(at_pm$parameter, at_pm$year)) %>% 
+  knitr::kable(format.args = list(big.mark = '.', decimal.mark = ','))
+```
+
+
+
+|      |   2008|   2009|   2010|   2011|   2012|   2013|   2014|   2015|     Sum|
+|:-----|------:|------:|------:|------:|------:|------:|------:|------:|-------:|
+|PM10  | 18.300| 20.805| 20.440| 15.695| 13.176| 12.410| 13.140| 12.775| 126.741|
+|PM2.5 |  1.464|  2.555|  4.380|  4.380|  4.392|  5.110|  5.475|  6.205|  33.961|
+|Sum   | 19.764| 23.360| 24.820| 20.075| 17.568| 17.520| 18.615| 18.980| 160.702|
+
+
+
+```r
+
 # If 4 or more measures are 'NA', then 'NA' for the whole time frame (br)
 ff <- function(L) ifelse(sum(is.na(L)) >= 4, NA, mean(L, na.rm = TRUE))
 

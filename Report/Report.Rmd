@@ -42,6 +42,14 @@ addmargins(table(at_inq$parameter, at_inq$year)) %>%
 
 ```
 
+```{r Check_Parameter_Names_PM, eval = TRUE}
+
+addmargins(table(at_pm$parameter, at_pm$year)) %>% 
+  knitr::kable(format.args = list(big.mark = '.', decimal.mark = ','))
+
+```
+
+
 ```{r Mean_over_day, eval = TRUE, include = TRUE}
 
 # If 4 or more measures are 'NA', then 'NA' for the whole time frame (br)
