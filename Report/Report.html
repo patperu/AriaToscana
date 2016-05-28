@@ -137,6 +137,7 @@ library('dplyr')
 #&gt; The following objects are masked from 'package:base':
 #&gt; 
 #&gt;     intersect, setdiff, setequal, union
+library('feather')
 library('AriaToscana')
 
 options(stringsAsFactors = FALSE,
@@ -2870,6 +2871,48 @@ spread(x4, year, pct_na) %&gt;% knitr::kable()</code></pre>
 </tr>
 </tbody>
 </table>
+</div>
+<div id="writeread-at_inq-with-feather" class="section level2">
+<h2>Write/Read ‘at_inq’ with ‘feather’</h2>
+<p>This was running on a T410 with 8GB memory and a HDD….</p>
+<pre class="r"><code>
+str(at_inq)
+#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':    16744074 obs. of  8 variables:
+#&gt;  $ stazione : chr  &quot;AR-CASA-STABBI&quot; &quot;AR-CASA-STABBI&quot; &quot;AR-CASA-STABBI&quot; &quot;AR-CASA-STABBI&quot; ...
+#&gt;  $ parameter: chr  &quot;NO&quot; &quot;NO&quot; &quot;NO&quot; &quot;NO&quot; ...
+#&gt;  $ year     : num  2008 2008 2008 2008 2008 ...
+#&gt;  $ month    : num  1 1 1 1 1 1 1 1 1 1 ...
+#&gt;  $ day      : num  1 1 1 1 1 1 1 1 1 1 ...
+#&gt;  $ hour     : num  1 2 3 4 5 6 7 8 9 10 ...
+#&gt;  $ value    : num  5 4 NA 4 5 5 5 4 4 4 ...
+#&gt;  $ valid    : num  1 1 0 1 1 1 1 1 1 1 ...
+
+path &lt;- &quot;at_inq.feather&quot;
+
+system.time(write_feather(at_inq, path))
+#&gt;    user  system elapsed 
+#&gt;    4.27    1.98   18.39
+
+utils:::format.object_size(file.size(path), units = &quot;Mb&quot;)
+#&gt; [1] &quot;1159.7 Mb&quot;
+
+system.time(x &lt;- read_feather(path))
+#&gt;    user  system elapsed 
+#&gt;    3.30    0.73    4.20
+
+str(x)
+#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':    16744074 obs. of  8 variables:
+#&gt;  $ stazione : chr  &quot;AR-CASA-STABBI&quot; &quot;AR-CASA-STABBI&quot; &quot;AR-CASA-STABBI&quot; &quot;AR-CASA-STABBI&quot; ...
+#&gt;  $ parameter: chr  &quot;NO&quot; &quot;NO&quot; &quot;NO&quot; &quot;NO&quot; ...
+#&gt;  $ year     : num  2008 2008 2008 2008 2008 ...
+#&gt;  $ month    : num  1 1 1 1 1 1 1 1 1 1 ...
+#&gt;  $ day      : num  1 1 1 1 1 1 1 1 1 1 ...
+#&gt;  $ hour     : num  1 2 3 4 5 6 7 8 9 10 ...
+#&gt;  $ value    : num  5 4 NA 4 5 5 5 4 4 4 ...
+#&gt;  $ valid    : num  1 1 0 1 1 1 1 1 1 1 ...
+
+identical(x, at_inq)
+#&gt; [1] TRUE</code></pre>
 <pre class="r"><code>devtools::session_info()
 #&gt; Session info --------------------------------------------------------------
 #&gt;  setting  value                                      
@@ -2890,6 +2933,7 @@ spread(x4, year, pct_na) %&gt;% knitr::kable()</code></pre>
 #&gt;  digest        0.6.9       2016-01-08 CRAN (R 3.3.0)                    
 #&gt;  dplyr       * 0.4.3.9001  2016-05-05 Github (hadley/dplyr@3074cf7)     
 #&gt;  evaluate      0.9         2016-04-29 CRAN (R 3.3.0)                    
+#&gt;  feather     * 0.0.1       2016-05-18 CRAN (R 3.3.0)                    
 #&gt;  formatR       1.4         2016-05-09 CRAN (R 3.3.0)                    
 #&gt;  ggplot2     * 2.1.0       2016-03-01 CRAN (R 3.3.0)                    
 #&gt;  gtable        0.2.0       2016-02-26 CRAN (R 3.3.0)                    

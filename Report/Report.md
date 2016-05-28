@@ -20,6 +20,7 @@ library('dplyr')
 #> The following objects are masked from 'package:base':
 #> 
 #>     intersect, setdiff, setequal, union
+library('feather')
 library('AriaToscana')
 
 options(stringsAsFactors = FALSE,
@@ -420,6 +421,52 @@ spread(x4, year, pct_na) %>% knitr::kable()
 |    11|  0.0|  6.7|  0.0|  0.0|  0.0|  6.7| 20.0| 30.0|
 |    12| 19.4|  0.0| 22.6|  3.2|  3.2| 16.1| 19.4| 12.9|
 
+## Write/Read 'at_inq' with 'feather'
+
+This was running on a T410 with 8GB memory and a HDD....
+
+
+```r
+
+str(at_inq)
+#> Classes 'tbl_df', 'tbl' and 'data.frame':	16744074 obs. of  8 variables:
+#>  $ stazione : chr  "AR-CASA-STABBI" "AR-CASA-STABBI" "AR-CASA-STABBI" "AR-CASA-STABBI" ...
+#>  $ parameter: chr  "NO" "NO" "NO" "NO" ...
+#>  $ year     : num  2008 2008 2008 2008 2008 ...
+#>  $ month    : num  1 1 1 1 1 1 1 1 1 1 ...
+#>  $ day      : num  1 1 1 1 1 1 1 1 1 1 ...
+#>  $ hour     : num  1 2 3 4 5 6 7 8 9 10 ...
+#>  $ value    : num  5 4 NA 4 5 5 5 4 4 4 ...
+#>  $ valid    : num  1 1 0 1 1 1 1 1 1 1 ...
+
+path <- "at_inq.feather"
+
+system.time(write_feather(at_inq, path))
+#>    user  system elapsed 
+#>    4.27    1.98   18.39
+
+utils:::format.object_size(file.size(path), units = "Mb")
+#> [1] "1159.7 Mb"
+
+system.time(x <- read_feather(path))
+#>    user  system elapsed 
+#>    3.30    0.73    4.20
+
+str(x)
+#> Classes 'tbl_df', 'tbl' and 'data.frame':	16744074 obs. of  8 variables:
+#>  $ stazione : chr  "AR-CASA-STABBI" "AR-CASA-STABBI" "AR-CASA-STABBI" "AR-CASA-STABBI" ...
+#>  $ parameter: chr  "NO" "NO" "NO" "NO" ...
+#>  $ year     : num  2008 2008 2008 2008 2008 ...
+#>  $ month    : num  1 1 1 1 1 1 1 1 1 1 ...
+#>  $ day      : num  1 1 1 1 1 1 1 1 1 1 ...
+#>  $ hour     : num  1 2 3 4 5 6 7 8 9 10 ...
+#>  $ value    : num  5 4 NA 4 5 5 5 4 4 4 ...
+#>  $ valid    : num  1 1 0 1 1 1 1 1 1 1 ...
+
+identical(x, at_inq)
+#> [1] TRUE
+```
+
 
 ```r
 devtools::session_info()
@@ -442,6 +489,7 @@ devtools::session_info()
 #>  digest        0.6.9       2016-01-08 CRAN (R 3.3.0)                    
 #>  dplyr       * 0.4.3.9001  2016-05-05 Github (hadley/dplyr@3074cf7)     
 #>  evaluate      0.9         2016-04-29 CRAN (R 3.3.0)                    
+#>  feather     * 0.0.1       2016-05-18 CRAN (R 3.3.0)                    
 #>  formatR       1.4         2016-05-09 CRAN (R 3.3.0)                    
 #>  ggplot2     * 2.1.0       2016-03-01 CRAN (R 3.3.0)                    
 #>  gtable        0.2.0       2016-02-26 CRAN (R 3.3.0)                    

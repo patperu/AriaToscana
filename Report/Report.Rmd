@@ -28,6 +28,7 @@ knitr::opts_chunk$set(
 library('ggplot2')
 library('tidyr')
 library('dplyr')
+library('feather')
 library('AriaToscana')
 
 options(stringsAsFactors = FALSE,
@@ -153,6 +154,28 @@ x4 <- tbl_df(at_pm) %>%
        select(year, month, pct_na)
 
 spread(x4, year, pct_na) %>% knitr::kable()
+```
+
+## Write/Read 'at_inq' with 'feather'
+
+This was running on a T410 with 8GB memory and a HDD....
+
+```{r Feather}
+
+str(at_inq)
+
+path <- "at_inq.feather"
+
+system.time(write_feather(at_inq, path))
+
+utils:::format.object_size(file.size(path), units = "Mb")
+
+system.time(x <- read_feather(path))
+
+str(x)
+
+identical(x, at_inq)
+
 ```
 
 ```{r Session_Info}
