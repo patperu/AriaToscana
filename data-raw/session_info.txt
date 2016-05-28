@@ -1,0 +1,38 @@
+Date this protocol was last modified: 2016-05-28 10:19:47 
+
+ setting  value                                      
+ version  R version 3.3.0 Patched (2016-05-03 r70575)
+ system   x86_64, mingw32                            
+ ui       RStudio (0.99.1172)                        
+ language (EN)                                       
+ collate  German_Germany.1252                        
+ tz       Europe/Berlin                              
+ date     2016-05-28                                 
+
+ package    * version     date       source                          
+ assertthat   0.1         2013-12-06 CRAN (R 3.3.0)                  
+ curl         0.9.7       2016-04-10 CRAN (R 3.3.0)                  
+ DBI          0.4-1       2016-05-08 CRAN (R 3.3.0)                  
+ devtools     1.11.1      2016-04-21 CRAN (R 3.3.0)                  
+ digest       0.6.9       2016-01-08 CRAN (R 3.3.0)                  
+ dplyr      * 0.4.3.9001  2016-05-05 Github (hadley/dplyr@3074cf7)   
+ git2r        0.15.0      2016-05-11 CRAN (R 3.3.0)                  
+ httr       * 1.1.0       2016-01-28 CRAN (R 3.3.0)                  
+ lazyeval     0.1.10.9000 2016-05-05 Github (hadley/lazyeval@bce211b)
+ lubridate  * 1.5.6       2016-04-06 CRAN (R 3.3.0)                  
+ magrittr     1.5         2014-11-22 CRAN (R 3.3.0)                  
+ memoise      1.0.0       2016-01-29 CRAN (R 3.3.0)                  
+ pbapply    * 1.2-1       2016-04-19 CRAN (R 3.3.0)                  
+ R6           2.1.2       2016-01-26 CRAN (R 3.3.0)                  
+ Rcpp         0.12.5      2016-05-14 CRAN (R 3.3.0)                  
+ readr      * 0.2.2       2015-10-22 CRAN (R 3.3.0)                  
+ rsconnect    0.4.3       2016-05-02 CRAN (R 3.3.0)                  
+ rstudioapi   0.5         2016-01-24 CRAN (R 3.3.0)                  
+ rvest      * 0.3.1.9000  2016-05-16 Github (hadley/rvest@7d65d84)   
+ selectr      0.2-3       2014-12-24 CRAN (R 3.3.0)                  
+ stringi      1.0-1       2015-10-22 CRAN (R 3.3.0)                  
+ stringr      1.0.0       2015-04-30 CRAN (R 3.3.0)                  
+ tibble       1.0-1       2016-05-05 Github (hadley/tibble@cb38672)  
+ withr        1.0.1       2016-02-04 CRAN (R 3.3.0)                  
+ XML          3.98-1.4    2016-03-01 CRAN (R 3.3.0)                  
+ xml2       * 0.1.2       2015-09-01 CRAN (R 3.3.0)                  

@@ -120,3 +120,11 @@ at_pm <- tbl_df(at_pm) %>%
                  day, value, valid)
 
 devtools::use_data(at_pm, overwrite = TRUE)
+
+# Session Info
+
+sink(file.path(getwd(), "data-raw/session_info.txt", fsep = ""))
+  cat(paste0("Date this protocol was last modified: ", Sys.time()), "\n\n")
+  devtools::session_info()
+sink()
+

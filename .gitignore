@@ -3,3 +3,4 @@
 .RData
 .Ruserdata
 /diverses
+/data-raw/*.zip
