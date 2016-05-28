@@ -1,7 +1,7 @@
 ---
 title: "Aria Toscana"
 author: "Patrick Hausmann"
-date: "08/02/2016"
+date: '`r Sys.Date()`'
 output:
   html_document:
     keep_md: true
@@ -48,7 +48,7 @@ addmargins(table(at_inq$parameter, at_inq$year)) %>%
 ff <- function(L) ifelse(sum(is.na(L)) >= 4, NA, mean(L, na.rm = TRUE))
 
 x1 <- tbl_df(at_inq) %>%
-       filter(year %in% c(2008, 2012, 2014) & parameter %in% c("O3", "NO2", "CO")) %>%
+       filter(year %in% c(2008, 2012, 2014, 2015) & parameter %in% c("O3", "NO2", "CO")) %>%
        mutate(br = factor(cut(hour, breaks = 4), 
                           labels = c("00-06h", "06-12h", 
                                      "12-18h", "18-24h")),
@@ -58,19 +58,19 @@ x1 <- tbl_df(at_inq) %>%
                  val_mean = ff(value))
 ```
 
-```{r plot_2014, eval = TRUE}
+```{r plot_NO2_FI, eval = TRUE}
 
-p1 <- ggplot(subset(x1, subset = year == 2014 & parameter == "NO2" & provincia == "FI"), 
+p1 <- ggplot(subset(x1, subset = year == 2015 & parameter == "NO2" & provincia == "FI"), 
              aes(as.factor(month), val_mean, group = year, color = year))
 p1 <- p1 + geom_point(shape = 1, col ="blue") 
 p1 <- p1 + facet_grid(br ~ stazione) 
 p1 <- p1 + stat_smooth(aes(group = 1), col = "red")
-p1 <- p1 + labs(title = "Biossido di azoto NO2, 2014, Firenze (FI)")
+p1 <- p1 + labs(title = "Biossido di azoto NO2, 2015, Firenze (FI)")
 p1 <- p1 + labs(x = "Mese", y = expression(paste(Biossido~di~azoto~(NO2)~µg/m^3)))
 p1
 ```
 
-```{r plot_2008_2014, eval = TRUE}
+```{r plot_2008_2015, eval = TRUE}
 
 p2 <- ggplot(subset(x1, subset = 
                          stazione %in% c("LU-CAPANNORI", "FI-MOSSE", 
@@ -78,7 +78,7 @@ p2 <- ggplot(subset(x1, subset =
                          parameter == "NO2"), aes(as.factor(month), val_mean))
 p2 <- p2 + facet_grid(br ~ stazione)
 p2 <- p2 + stat_smooth(aes(group = as.factor(year), color = as.factor(year)), se = FALSE)
-p2 <- p2 + labs(title = "Biossido di azoto NO2, 2008/2012/2014")
+p2 <- p2 + labs(title = "Biossido di azoto NO2, 2008/2012/2014/2015")
 p2 <- p2 + labs(x = "Mese", 
                 y = expression(paste(Biossido~di~azoto~(NO2)~µg/m^3)))
 p2
@@ -95,12 +95,12 @@ m <- tbl_df(at_pm) %>%
        group_by(stazione, year) %>%
        mutate(days_gt50 = cumsum(value > 50)) %>%
        select(stazione, year, days_gt50) %>%
-       top_n(1, days_gt50) %>%
-       distinct(stazione, year) %>%
-       ungroup() %>%
-       arrange(stazione, year)
+       top_n(1, days_gt50) # %>%
+       #distinct(stazione, year) %>%
+       #ungroup() %>%
+       #arrange(stazione, year)
 
-spread(m, year, days_gt50, fill = ".") %>% knitr::kable()
+spread(unique(m), year, days_gt50, fill = ".") %>% knitr::kable()
 ```
 
 This is table 4.1.5. on page 24 from the [last report 2015](http://www.arpat.toscana.it/documentazione/catalogo-pubblicazioni-arpat/relazione-annuale-sullo-stato-della-qualita-dellaria-nella-regione-toscana-anno-2014/attachment_download/pubblicazione)
@@ -126,14 +126,14 @@ x3 <- tbl_df(x1) %>%
        group_by(provincia, stazione, year, month, parameter) %>%
         summarise(pct_na = round((sum(val_na) / (max(day) * 24)) * 100, 1) )
 
-filter(x3, year == 2014 & 
+filter(x3, year == 2015 & 
            stazione == "FI-GRAMSCI" & 
            parameter == "NO2") %>% knitr::kable()
 ```
 
-## Missing PM
+## Missing PM10
 
-Percent of missing values 
+Percent of missing values of PM10 by year and month
 
 ```{r Calc_missing_pm}
 
